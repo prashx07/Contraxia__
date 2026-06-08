@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contraxia - Blockchain Based Smart Contract Verification System</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Background Glowing Orbs -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <!-- Insecure Context Warning Alert Banner -->
+  <div id="insecureContextAlert" class="insecure-context-alert-banner hidden">
+    <div class="alert-content">
+      <span class="alert-icon">⚠️</span>
+      <div class="alert-text">
+        <strong>Insecure Context Detected:</strong> Web Crypto API is disabled on HTTP connections for non-localhost IPs. 
+        To generate keys, sign, or verify documents on your Android phone, you must use HTTPS, localhost port-forwarding, or add this origin to Chrome's <code>unsafely-treat-insecure-origin-as-secure</code> flag.
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="brand-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L3 7V13C3 18.55 6.84 23.74 12 25C17.16 23.74 21 18.55 21 13V7L12 2Z" fill="url(#brandGrad)" stroke="#00e5ff" stroke-width="2"/>
+            <path d="M9 13.5L11 15.5L15 11.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="brandGrad" x1="3" y1="2" x2="21" y2="25" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#0066ff"/>
+                <stop offset="1" stop-color="#00e5ff"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Contraxia</h1>
+          <p>Blockchain Based Smart Contract Verification System</p>
+        </div>
+      </div>
+
+      <!-- Network status -->
+      <div class="network-badge-container">
+        <div id="connectionStatus" class="network-status disconnected">
+          <span class="status-indicator"></span>
+          <span class="status-text">Disconnected from Ganache</span>
+        </div>
+        <div id="contractInfo" class="contract-info-bubble hidden">
+          <span>Contract: <strong id="contractAddressDisplay">0x00...</strong></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="navigation-bar">
+      <button class="nav-tab active" data-tab="dashboard-tab">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+        Dashboard
+      </button>
+      <button class="nav-tab" data-tab="identity-tab" id="tab-identity-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        1. Identity Setup
+      </button>
+      <button class="nav-tab" data-tab="sign-tab">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+        2. Sign Document
+      </button>
+      <button class="nav-tab" data-tab="ledger-tab">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        3. Ledger Explorer
+      </button>
+      <button class="nav-tab" data-tab="verify-tab">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        4. Verifier Portal
+      </button>
+    </nav>
+
+    <!-- Main Content Panels -->
+    <main class="panel-container">
+
+      <!-- DASHBOARD TAB -->
+      <section id="dashboard-tab" class="panel-section active">
+        <div class="grid-layout">
+          <!-- Overview Card -->
+          <div class="card glass-card full-width">
+            <h2>System Overview</h2>
+            <p>Welcome to <strong>Contraxia</strong>. This application is a fully integrated cryptographic smart contract and document verification demo using local Ethereum (Ganache) and client-side ECDSA P-256 digital signatures.</p>
+            
+            <div class="flow-steps-visual">
+              <div class="visual-step">
+                <div class="step-num">1</div>
+                <h4>Identity Setup</h4>
+                <p>Generate a persistent private key representing your cryptographic signature identity.</p>
+              </div>
+              <div class="visual-arrow">➜</div>
+              <div class="visual-step">
+                <div class="step-num">2</div>
+                <h4>Sign Document</h4>
+                <p>Hash a PDF in the browser (SHA-256) and sign it using your Private Key.</p>
+              </div>
+              <div class="visual-arrow">➜</div>
+              <div class="visual-step">
+                <div class="step-num">3</div>
+                <h4>Ethereum Ledger</h4>
+                <p>The Express relayer registers the hash, signature, and public key on the smart contract.</p>
+              </div>
+              <div class="visual-arrow">➜</div>
+              <div class="visual-step">
+                <div class="step-num">4</div>
+                <h4>Verifier</h4>
+                <p>Upload a file to automatically perform dual security checks: Hash Match and Signature Check.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Network Metrics -->
+          <div class="card glass-card">
+            <h3>Blockchain Node Health</h3>
+            <div class="metric-container">
+              <div class="metric-row">
+                <span class="metric-label">Node RPC Endpoint</span>
+                <span id="metricRpcEndpoint" class="metric-value">--</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Ganache Block Height</span>
+                <span id="metricBlockHeight" class="metric-value">--</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Network Protocol ID</span>
+                <span id="metricNetworkId" class="metric-value">--</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Smart Contract Status</span>
+                <span id="metricContractStatus" class="metric-value text-red">Unchecked</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Total Notarized Docs</span>
+                <span id="metricTotalDocs" class="metric-value">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Educational Info -->
+          <div class="card glass-card">
+            <h3>Security Architecture</h3>
+            <p>This system highlights several core web security principles:</p>
+            <ul class="security-list">
+              <li><strong>Zero-Trust Keys:</strong> Your Private Key is generated and processed in-memory client-side. The backend never sees it.</li>
+              <li><strong>Blockchain Immutability:</strong> The document hash is stored as a <code>bytes32</code> type on Ganache, providing a permanent, tamper-proof audit trail.</li>
+              <li><strong>Dual-Checks:</strong> Separate verification steps guarantee that file content changes trigger a <em>Tampered</em> state, while signature mismatches trigger a <em>Forged</em> state.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- IDENTITY SETUP TAB -->
+      <section id="identity-tab" class="panel-section">
+        <div class="grid-layout">
+          <!-- Left side: generator -->
+          <div class="card glass-card">
+            <h2>ECDSA Identity Generator</h2>
+            <p>Generate a persistent cryptographic identity key pair in the browser. You must download and save the keys. They will be used to sign your documents.</p>
+            
+            <div class="btn-group-centered">
+              <button id="generateKeysBtn" class="btn btn-primary btn-glow">Generate ECDSA P-256 Key Pair</button>
+            </div>
+
+            <!-- Keys Result display -->
+            <div id="keypairDisplay" class="keypair-display-box hidden">
+              <div class="field-container">
+                <label>Private Key (PKCS#8 PEM format)</label>
+                <div class="textarea-wrapper">
+                  <textarea id="privateKeyPemDisplay" readonly placeholder="Private key details..."></textarea>
+                  <button id="downloadPrivateKeyBtn" class="btn btn-small">Download Private Key (.pem)</button>
+                </div>
+                <span class="warning-text">⚠️ Keep this Private Key secret. It is used to generate signatures.</span>
+              </div>
+
+              <div class="field-container mt-2">
+                <label>Public Key (SubjectPublicKeyInfo PEM format)</label>
+                <div class="textarea-wrapper">
+                  <textarea id="publicKeyPemDisplay" readonly placeholder="Public key details..."></textarea>
+                  <button id="downloadPublicKeyBtn" class="btn btn-small">Download Public Key (.pem)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right side: load existing key -->
+          <div class="card glass-card">
+            <h2>Current Loaded Identity</h2>
+            <p>You can upload an existing PEM private key file to sign documents, or paste it below.</p>
+            
+            <div class="field-container">
+              <label>Load Private Key File</label>
+              <input type="file" id="privateKeyFileInput" accept=".pem,.txt" class="file-input-raw">
+              <div class="custom-file-uploader" id="keyFileDropzone">
+                <span class="upload-icon">🔑</span>
+                <span class="upload-text">Drag Private Key PEM here or click to browse</span>
+              </div>
+            </div>
+
+            <div class="field-container mt-2">
+              <label>Pasted Private Key String</label>
+              <textarea id="privateKeyInputArea" placeholder="Paste your Private Key PEM string here..."></textarea>
+              <button id="loadPastedKeyBtn" class="btn btn-secondary mt-1">Load Pasted Private Key</button>
+            </div>
+
+            <div class="identity-status-card" id="identityStatusCard">
+              <div class="status-label">Loaded Private Key status:</div>
+              <div class="status-indicator-wrapper">
+                <span class="status-dot red-dot" id="loadedKeyDot"></span>
+                <span id="loadedKeyText" class="status-value text-red">No Private Key Loaded</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SIGN DOCUMENT TAB -->
+      <section id="sign-tab" class="panel-section">
+        <div class="grid-layout">
+          <!-- Hashing section -->
+          <div class="card glass-card">
+            <h2>1. Choose & Hash PDF</h2>
+            <p>Select the PDF document you wish to sign. Hashing is performed in the browser; the PDF file itself will NOT be sent to the server.</p>
+
+            <div class="field-container">
+              <input type="file" id="signPdfFileInput" accept="application/pdf" class="file-input-raw">
+              <div class="custom-file-uploader" id="pdfSignDropzone">
+                <span class="upload-icon">📄</span>
+                <span class="upload-text" id="pdfSignUploadText">Drag PDF here or click to browse</span>
+              </div>
+            </div>
+
+            <div id="pdfHashResultBox" class="hash-result-box hidden">
+              <div class="metric-row">
+                <span class="metric-label">Filename:</span>
+                <span id="signFileName" class="metric-value font-bold">--</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">File Size:</span>
+                <span id="signFileSize" class="metric-value">--</span>
+              </div>
+              <div class="metric-row block-metric">
+                <span class="metric-label">Calculated SHA-256 Hash (Hex):</span>
+                <div class="code-block-display" id="signFileHash">0x...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Signing section -->
+          <div class="card glass-card">
+            <h2>2. Create & Publish Signature</h2>
+            <p>Ensure your identity private key is loaded to complete the signature.</p>
+
+            <div class="key-status-indicator-box mb-2">
+              <span>Signing Identity:</span>
+              <strong id="signingKeyStatus" class="text-red">No Private Key Loaded</strong>
+            </div>
+
+            <button id="signDocumentBtn" class="btn btn-primary btn-block btn-glow" disabled>
+              Generate Digital Signature
+            </button>
+
+            <div id="signatureResultBox" class="signature-result-box hidden mt-2">
+              <div class="field-container">
+                <label>Generated Signature (DER-Hex format)</label>
+                <textarea id="generatedSignatureHex" readonly class="signature-textarea"></textarea>
+              </div>
+
+              <div class="field-container mt-1">
+                <label>Public Key (Hex format - stored on blockchain)</label>
+                <textarea id="exportedPublicKeyHex" readonly class="signature-textarea"></textarea>
+              </div>
+
+              <button id="registerBlockchainBtn" class="btn btn-accent btn-block btn-glow mt-2">
+                Publish Notarization to Ethereum (Ganache)
+              </button>
+            </div>
+
+            <!-- Transaction Receipt -->
+            <div id="txReceiptBox" class="tx-receipt-box hidden mt-2">
+              <div class="success-banner">
+                <span class="check-icon">✓</span> Mined Successfully on Blockchain!
+              </div>
+              <div class="metric-container mt-1">
+                <div class="metric-row">
+                  <span class="metric-label">Tx Hash:</span>
+                  <span id="receiptTxHash" class="metric-value code-text text-truncate">--</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-label">Block Number:</span>
+                  <span id="receiptBlockNumber" class="metric-value">--</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LEDGER EXPLORER TAB -->
+      <section id="ledger-tab" class="panel-section">
+        <div class="card glass-card">
+          <div class="ledger-header">
+            <h2>Immutable Blockchain Ledger Explorer</h2>
+            <button id="refreshLedgerBtn" class="btn btn-secondary btn-small">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+              Refresh Explorer
+            </button>
+          </div>
+          <p>These records are fetched directly from the <code>DocumentRegistry</code> smart contract. Blockchain records are permanently frozen in history.</p>
+
+          <div id="ledgerEmptyState" class="ledger-empty-state">
+            <span class="empty-icon">📁</span>
+            <h3>No Records Found</h3>
+            <p>Ensure Ganache is running and deploy the smart contract, then sign a document to populate the ledger.</p>
+          </div>
+
+          <div id="ledgerTimeline" class="ledger-timeline hidden">
+            <!-- Dynamically populated blocks -->
+          </div>
+        </div>
+      </section>
+
+      <!-- VERIFIER PORTAL TAB -->
+      <section id="verify-tab" class="panel-section">
+        <div class="grid-layout">
+          <!-- Verify dropzone -->
+          <div class="card glass-card">
+            <h2>Verify PDF Authenticity</h2>
+            <p>Upload a PDF file to verify its state. The system will retrieve the matching hash registration from the blockchain and run verification checks.</p>
+
+            <div class="field-container">
+              <input type="file" id="verifyPdfFileInput" accept="application/pdf" class="file-input-raw">
+              <div class="custom-file-uploader" id="pdfVerifyDropzone">
+                <span class="upload-icon">🔍</span>
+                <span class="upload-text" id="pdfVerifyUploadText">Drag PDF to verify or click to browse</span>
+              </div>
+            </div>
+
+            <div id="verifyFileStatsBox" class="hash-result-box hidden">
+              <div class="metric-row">
+                <span class="metric-label">Filename:</span>
+                <span id="verifyFileName" class="metric-value font-bold">--</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Calculated Hash (SHA-256):</span>
+                <div class="code-block-display" id="verifyFileHash">0x...</div>
+              </div>
+            </div>
+
+            <!-- Advanced Manual Check Option -->
+            <details class="advanced-verifier-details mt-2">
+              <summary>Advanced / Manual Verification inputs</summary>
+              <div class="manual-inputs-container mt-1">
+                <div class="field-container">
+                  <label>Override SHA-256 Hash (Hex, 64 chars)</label>
+                  <input type="text" id="manualVerifyHash" placeholder="0x...">
+                </div>
+                <div class="field-container mt-1">
+                  <label>Override Signature (DER Hex)</label>
+                  <textarea id="manualVerifySignature" placeholder="0x..."></textarea>
+                </div>
+                <div class="field-container mt-1">
+                  <label>Override Public Key (Hex)</label>
+                  <textarea id="manualVerifyPublicKey" placeholder="0x..."></textarea>
+                </div>
+                <button id="manualVerifyBtn" class="btn btn-secondary btn-block mt-2">Execute Manual Checks</button>
+              </div>
+            </details>
+          </div>
+
+          <!-- Verification Checks Output -->
+          <div class="card glass-card">
+            <h2>Security Verification Results</h2>
+            <p>Real-time checks performed in-browser using blockchain data.</p>
+
+            <!-- Verification Progress / Results Checklist -->
+            <div class="verification-checks-checklist">
+              <div class="check-item" id="checkHashMatchRow">
+                <span class="check-bullet">○</span>
+                <div class="check-text-content">
+                  <h4>Check 1: Hash Match Check</h4>
+                  <p class="check-desc">Checks if the document's SHA-256 hash exists in the Solidity smart contract records.</p>
+                </div>
+              </div>
+
+              <div class="check-item" id="checkSignatureValidRow">
+                <span class="check-bullet">○</span>
+                <div class="check-text-content">
+                  <h4>Check 2: Cryptographic Signature Verification</h4>
+                  <p class="check-desc">Verifies if the signature on the ledger is mathematically valid for this hash, using the stored public key.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Big Visual Result Banner -->
+            <div id="verificationResultBanner" class="verification-result-banner neutral-banner">
+              <div class="banner-status-title">No Document Loaded</div>
+              <div class="banner-status-subtext">Upload a PDF to execute security verification routines.</div>
+            </div>
+
+            <!-- Fetched Blockchain Record Metadata -->
+            <div id="fetchedRecordMetadataBox" class="fetched-record-box hidden mt-2">
+              <h4>Registered Blockchain Metadata:</h4>
+              <div class="metric-container mt-1">
+                <div class="metric-row">
+                  <span class="metric-label">Stored File Name:</span>
+                  <span id="metaFileName" class="metric-value font-bold">--</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-label">Registration Time:</span>
+                  <span id="metaTimestamp" class="metric-value">--</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-label">Notarizer Eth Address:</span>
+                  <span id="metaRegisteredBy" class="metric-value code-text text-truncate">--</span>
+                </div>
+                <div class="metric-row block-metric">
+                  <span class="metric-label">Stored Public Key (Hex):</span>
+                  <div class="code-block-display max-height-60" id="metaPublicKey">--</div>
+                </div>
+                <div class="metric-row block-metric">
+                  <span class="metric-label">Stored Signature (Hex):</span>
+                  <div class="code-block-display max-height-60" id="metaSignature">--</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Contraxia Smart Contract Verification System | Built with Ethereum, Solidity, Ganache, Node.js, and Web Crypto API.</p>
+      <p>Demonstrates: Cryptographic Signatures, Identity Persistence, Immutable Ledgers, and Integrity Checking.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
